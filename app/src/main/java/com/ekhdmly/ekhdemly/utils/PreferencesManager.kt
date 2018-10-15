@@ -1,6 +1,5 @@
 package com.ekhdmly.ekhdemly.utils
 
-
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
@@ -13,6 +12,7 @@ class PreferencesManager(context: Context) {
         const val PREFERENCE_CONFIGURATION_NAME = "configuration"
         const val FIRST_TIME = "isFirstTime"
         const val LOGIN = "Login"
+        const val USER_ID = "userId"
     }
 
     private val preference: SharedPreferences
@@ -24,7 +24,7 @@ class PreferencesManager(context: Context) {
         editor = preference.edit()
     }
 
-    var isFirstTime : Boolean
+    var isFirstTime: Boolean
         get() = !preference.getBoolean(FIRST_TIME, true)
         set(value) {
             editor.putBoolean(FIRST_TIME, false).commit()
@@ -34,6 +34,12 @@ class PreferencesManager(context: Context) {
         get() = preference.getBoolean(LOGIN, false)
         set(value) {
             editor.putBoolean(LOGIN, value).commit()
+        }
+
+    var userId: Long
+        get() = preference.getLong(USER_ID, -1)
+        set(value) {
+            editor.putLong(USER_ID, value).commit()
         }
 
     fun removePreference() = editor.clear().commit()
