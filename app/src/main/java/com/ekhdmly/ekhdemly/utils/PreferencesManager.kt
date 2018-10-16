@@ -24,18 +24,21 @@ class PreferencesManager(context: Context) {
         editor = preference.edit()
     }
 
+    // Used to track the App State if First Or Nor
     var isFirstTime: Boolean
         get() = !preference.getBoolean(FIRST_TIME, true)
         set(value) {
             editor.putBoolean(FIRST_TIME, false).commit()
         }
 
+    // Used to track the User State of Login or NOt
     var isLogin: Boolean
         get() = preference.getBoolean(LOGIN, false)
         set(value) {
             editor.putBoolean(LOGIN, value).commit()
         }
 
+    // Used to track the User ID
     var userId: Long
         get() = preference.getLong(USER_ID, -1)
         set(value) {
