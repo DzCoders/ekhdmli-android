@@ -3,6 +3,8 @@ package com.ekhdmly.ekhdemly.utils
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
+import org.json.JSONObject
+import java.security.MessageDigest
 
 class PreferencesManager(context: Context) {
 
@@ -14,6 +16,18 @@ class PreferencesManager(context: Context) {
         const val LOGIN = "Login"
         const val USER_ID = "userId"
         const val HASH = "hash"
+
+        /**
+         * Function that returns the hash of a given String.
+         * @param data : the data you want to hash.
+         * @return the hash of the given data.
+         */
+        fun calculateHash(data: String): String {
+            val bytes = data.toByteArray()
+            val md = MessageDigest.getInstance("SHA-256")
+            val digest = md.digest(bytes)
+            return digest.fold("") { str, it -> str + "%02x".format(it) }
+        }
     }
 
     private val preference: SharedPreferences
@@ -26,47 +40,52 @@ class PreferencesManager(context: Context) {
     }
 
     // Used to track the App State if First Or Not.
-    var isFirstTime: Boolean
+    private var isFirstTime: Boolean
         get() = !preference.getBoolean(FIRST_TIME, true)
         set(value) {
             editor.putBoolean(FIRST_TIME, false).commit()
         }
 
     // Used to track the User State of Login or Not.
-    var isLogin: Boolean
+    private var isLogin: Boolean
         get() = preference.getBoolean(LOGIN, false)
         set(value) {
             editor.putBoolean(LOGIN, value).commit()
         }
 
     // Used to track the User ID.
-    var userId: Long
+    private var userId: Long
         get() = preference.getLong(USER_ID, -1)
         set(value) {
             editor.putLong(USER_ID, value).commit()
         }
 
     // Hash of the File.
-    var hash : String?
-        get() = preference.getString(HASH,null)
-        set(value){
-            editor.putString(HASH , value)
+    private var hash: String?
+        get() = preference.getString(HASH, calculateHash(this.toString()))
+        set(value) {
+            editor.putString(HASH, value)
         }
 
     /**
      * This Function calculate the current Hash of file.
      */
-    fun calculateCurrentHash() : String{
-        return ""
+    fun calculateCurrentHash(): String {
+        return calculateHash(toString())
     }
 
     /**
-     * This Function calculate the Hash of a given data.
-     * @param data : the data array we want to hash.
+     * Function to remove the data in the preference file.
+     * @return boolean indicate the operation is done correctly or not.
      */
-    fun calculateHash(data : Array<String>) : String {
-        return ""
-    }
-
     fun removePreference() = editor.clear().commit()
+
+    override fun toString(): String {
+        val `object` = JSONObject()
+        `object`.put(USER_ID, userId)
+        `object`.put(LOGIN, isLogin)
+        `object`.put(FIRST_TIME, isFirstTime)
+        `object`.put(HASH, hash)
+        return `object`.toString()
+    }
 }
