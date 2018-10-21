@@ -16,6 +16,8 @@ class PreferencesManager(context: Context) {
         const val LOGIN = "Login"
         const val USER_ID = "userId"
         const val HASH = "hash"
+        const val NAME = "full_name"
+        const val PICTURE = "pic_path"
 
         /**
          * Function that returns the hash of a given String.
@@ -64,7 +66,20 @@ class PreferencesManager(context: Context) {
     private var hash: String?
         get() = preference.getString(HASH, calculateHash(this.toString()))
         set(value) {
-            editor.putString(HASH, value)
+            editor.putString(HASH, value).commit()
+        }
+    // Used to track the user picture path
+    private var picture: String?
+        get() = preference.getString(PICTURE, null)
+        set(value) {
+            editor.putString(PICTURE, value).commit()
+        }
+    // Used to track the full name
+    private var fullName: String?
+        get() = preference.getString(NAME, null)
+        set(value) {
+            editor.putString(NAME, value).commit()
+
         }
 
     /**
@@ -85,7 +100,8 @@ class PreferencesManager(context: Context) {
         `object`.put(USER_ID, userId)
         `object`.put(LOGIN, isLogin)
         `object`.put(FIRST_TIME, isFirstTime)
-        `object`.put(HASH, hash)
+        `object`.put(PICTURE, picture)
+        `object`.put(NAME, fullName)
         return `object`.toString()
     }
 }
